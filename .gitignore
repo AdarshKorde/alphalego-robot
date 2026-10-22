@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+alphalego_sysid/
+*.npz
