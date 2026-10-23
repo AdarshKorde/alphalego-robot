@@ -1,0 +1,132 @@
+{
+  "trials": {
+    "grip_eff1000_try1": {
+      "started": "2026-10-23T19:12:11",
+      "effort": 1000,
+      "try": 1,
+      "steady": {
+        "open_mm_mean": 37.69999999999999,
+        "open_mm_std": 1.4210854715202004e-14,
+        "eff_nm_mean": -1.042795,
+        "eff_nm_std": 0.0028500833321150523,
+        "n": 400
+      },
+      "events": {
+        "close": 0.0,
+        "push_start": 170.87976044300012,
+        "push_end": 180.8397694230007,
+        "open": 216.11972103899825
+      },
+      "n_fb": 43465
+    },
+    "grip_eff1000_try2": {
+      "started": "2026-10-23T19:18:34",
+      "effort": 1000,
+      "try": 2,
+      "steady": {
+        "open_mm_mean": 37.80000000000001,
+        "open_mm_std": 1.4210854715202004e-14,
+        "eff_nm_mean": -1.043045,
+        "eff_nm_std": 0.0029219813483319884,
+        "n": 400
+      },
+      "events": {
+        "close": 0.0,
+        "push_start": 56.921196905001125,
+        "push_end": 66.36072531099853,
+        "open": 115.56035336700006
+      },
+      "n_fb": 23410
+    },
+    "grip_eff1000_try3": {
+      "started": "2026-10-23T19:21:53",
+      "effort": 1000,
+      "try": 3,
+      "steady": {
+        "open_mm_mean": 37.80000000000001,
+        "open_mm_std": 1.4210854715202004e-14,
+        "eff_nm_mean": -1.0427149999999998,
+        "eff_nm_std": 0.0026568355237010857,
+        "n": 400
+      },
+      "events": {
+        "close": 0.0,
+        "push_start": 43.44048157200086,
+        "push_end": 51.64026911600013,
+        "open": 62.680262688001676
+      },
+      "n_fb": 12829
+    },
+    "grip_eff2000_try1": {
+      "started": "2026-10-23T19:25:04",
+      "effort": 2000,
+      "try": 1,
+      "steady": {
+        "open_mm_mean": 35.89999999999999,
+        "open_mm_std": 7.105427357601002e-15,
+        "eff_nm_mean": -2.086195,
+        "eff_nm_std": 0.0026061417843241015,
+        "n": 400
+      },
+      "events": {
+        "close": 0.0,
+        "push_start": 35.561659621002036,
+        "push_end": 45.000250621000305,
+        "open": 53.561115568001696
+      },
+      "n_fb": 11015
+    }
+  },
+  "started": "2026-10-23T19:17:53",
+  "firmware": "S-V1.8-8",
+  "sdk_version": "0.6.2",
+  "can": "can0",
+  "script_sha256": {
+    "grip_test.py": "d2fc7fe37a2c166c940734d40133d1d537f2774f32b26d65072b6090319579cd",
+    "sysid_record.py": "dc8447f858e4028ee60080d9c08d4c9deb38b25960fecb7b81d9fcf7c2f8d6b5"
+  },
+  "q_home_deg": [
+    0.0,
+    60.0,
+    -50.0,
+    0.0,
+    50.0,
+    0.0
+  ],
+  "rate_hz": 25.0,
+  "hold_speed_pct": 60,
+  "open_um": 60000,
+  "close_um": 20000,
+  "settle_s": 1.5,
+  "steady_s": 2.0,
+  "command_path": "MotionCtrl_2(0x01, 0x01, speed_pct, 0x00); JointCtrl(0.001 deg); GripperCtrl(um, effort, 0x01, 0)",
+  "units": {
+    "fb_grip_um": "0.001 mm",
+    "fb_grip_effort": "0.001 N\u00b7m",
+    "fb_effort": "0.001 N\u00b7m",
+    "fb_q_mdeg": "0.001 deg",
+    "fb_t / cmd_t / events_t": "host time.monotonic() s",
+    "grip_status": "0x2A8 byte 6; bits 0-5 faults, bit 6 enabled, bit 7 zeroed"
+  },
+  "wall_minus_monotonic_s": 1792742345.558917,
+  "discarded": {
+    "grip_eff2000_try1_noplace": {
+      "started": "2026-10-23T19:24:16",
+      "effort": 2000,
+      "try": 1,
+      "steady": {
+        "open_mm_mean": 20.400000000000002,
+        "open_mm_std": 3.552713678800501e-15,
+        "eff_nm_mean": -0.14412718204488778,
+        "eff_nm_std": 0.0041990717759794495,
+        "n": 401
+      },
+      "events": {
+        "close": 0.0,
+        "open": 15.920315997998841
+      },
+      "n_fb": 3488,
+      "reason": "operator could not place the brick; jaws closed on nothing (20.4 mm, -0.14 N\u00b7m)"
+    }
+  }
+}

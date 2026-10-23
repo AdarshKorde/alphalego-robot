@@ -1,0 +1,26 @@
+{
+  "grip_eff1000_try1": {
+    "slip": "0",
+    "clicked": "yes",
+    "tilt": "no",
+    "notes": "operator: no slip, no rotation"
+  },
+  "grip_eff1000_try2": {
+    "slip": "~1",
+    "clicked": "yes",
+    "tilt": "slight",
+    "notes": "operator: just a little rotation, slip very little ~1 mm"
+  },
+  "grip_eff1000_try3": {
+    "slip": "0",
+    "clicked": "yes",
+    "tilt": "no",
+    "notes": "operator: no slip, full click, no tilt"
+  },
+  "grip_eff2000_try1": {
+    "slip": "0",
+    "clicked": "yes",
+    "tilt": "no",
+    "notes": "operator: no slip, everything good"
+  }
+}
