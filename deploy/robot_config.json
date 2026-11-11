@@ -1,0 +1,26 @@
+{
+  "_comment": "Real-robot settings for run_policy.py / teach_plate.py. Units: metres, rad unless the key says otherwise. Edit after measuring; every TODO must be filled before mode 'real'.",
+  "can": "can0",
+  "rate_hz": 25.0,
+  "plate_calib_file": "calib/plate.json",
+
+  "gripper_effort": 3000,
+  "_gripper_effort": "0.001 N*m; 3000 ~ 30 N assumed (spec 50 N at max). Pen test: 2000 held, 1000 slipped once.",
+  "gripper_open_um": 50000,
+  "gripper_close_um": 0,
+  "gripper_real_to_sim": [[0.0003, 0.0], [0.0377, 0.0318], [0.050, 0.050]],
+  "_gripper_real_to_sim": "TODO B3: [real reading, sim opening] pairs. Now: closed empty 0.3 mm -> 0; brick at effort 1000 read 37.7 mm -> 31.8 (sim brick width); open assumed 1:1. Re-measure at effort 3000.",
+
+  "joint_min_deg": [-150.0, 0.0, -170.0, -100.0, -70.0, -120.0],
+  "joint_max_deg": [150.0, 180.0, 0.0, 100.0, 70.0, 120.0],
+  "start_margin_deg": 3.0,
+  "feedback_max_age_s": 0.05,
+  "tracking_error_max_rad": 0.25,
+  "fingertip_min_above_slab_m": 0.003,
+  "effort_abort_nm": [6.0, 8.0, 8.0, 3.0, 3.0, 2.0],
+  "_effort_abort_nm": "TODO tune: abort if |joint effort| exceeds this (0.001 N*m feedback / 1000). Set to the air-run maximum plus margin; the press will raise J2/J3.",
+  "episode_s": 12.0,
+
+  "timing_budget_ms": 5.0,
+  "_timing_budget_ms": "read -> send must stay under this (sim assumed ~10-15 ms command delay inside the firmware); period must stay 40 +- 2 ms"
+}
