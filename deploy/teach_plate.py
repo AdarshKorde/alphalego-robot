@@ -107,8 +107,9 @@ def main():
                 print(f"  WARNING: gripper is {math.degrees(math.acos(min(1.0, -R[2, 2]))):.1f} deg from vertical")
             grips.append({"cell": [a, b], "tcp": p.tolist(), "closing_dir_xy": n[:2].tolist(), "q": q.tolist(),
                           "grip_m": grip})
+            off = float(n[:2] @ (p[:2] - core.Plate(cfg).cell_centre(a, b))) * 1e3   # vs the sim's (CAD) cell
             print(f"  cell ({a},{b}): fingertips at ({p[0] * 1e3:.1f}, {p[1] * 1e3:.1f}, {p[2] * 1e3:.1f}) mm, "
-                  f"closing along ({n[0]:+.2f}, {n[1]:+.2f})")
+                  f"closing along ({n[0]:+.2f}, {n[1]:+.2f}); {off:+.1f} mm from the sim cell along that axis")
     finally:
         arm.close()
     dirs = np.array([gr["closing_dir_xy"] for gr in grips])

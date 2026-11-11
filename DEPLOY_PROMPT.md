@@ -52,6 +52,11 @@ or jog it in small steps with your own read-and-command tool (max 1 deg per step
 4. Repeat on cells `5 5`, `5 0`, `0 5` (both wrist angles each).
 5. Remove the brick, close the gripper fully, rest the fingertips lightly on plate stud tops, type `z` (do 2-3 spots).
 6. Type `fit`. Report the "plate vs sim" line and the residuals. Pass: all residuals within 1 mm (redo outliers).
+7. The plate must be where the sim had it: the policy was trained with a fixed plate and places the brick at that
+   trained spot, whatever the calibration says. If |dx| or |dy| > 1 mm or |yaw| > 0.5 deg, slide/turn the plate by
+   the opposite amount and check again: each grip prints "+x.x mm from the sim cell along that axis", so gripping
+   cell `0 0` at both wrist angles shows the target's offset directly (aim for both within +-1 mm), then `5 5` at
+   both angles for the rotation. When it's in, do one full teach (1-6) and `fit` for the final `plate.json`.
 The plate must stay where it is from now on (tape or clamp it).
 
 ## Step 5: air run (arm moves, 10 cm above the plate, no brick)

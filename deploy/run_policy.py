@@ -122,8 +122,9 @@ def main():
         d = (np.array(plate.pos) - np.array(cfg["geometry"]["plate_pos"])) * 1e3
         print(f"plate vs sim: dx {d[0]:+.1f} dy {d[1]:+.1f} dz {d[2]:+.1f} mm, yaw {math.degrees(plate.yaw):+.2f} deg"
               + ("  (air: +100 mm on purpose)" if args.mode == "air" else ""))
-        if args.mode == "real" and (np.linalg.norm(d[:2]) > 5 or abs(d[2]) > 5):
-            print("WARNING: the plate is > 5 mm from where the policy was trained; robustness was only tested to a few mm")
+        if args.mode == "real" and (np.abs(d[:2]).max() > 1.5 or abs(d[2]) > 3 or abs(math.degrees(plate.yaw)) > 0.5):
+            print("WARNING: the plate is not where it was in training (fixed there): the policy places at the trained "
+                  "spot, so nudge the plate to within 1 mm / 0.5 deg (DEPLOY_PROMPT step 4)")
 
     policy, rules, obs_b = core.Policy(), core.ActionRules(cfg), core.ObsBuilder(cfg, plate)
     g = cfg["geometry"]
