@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 alphalego_sysid/
 *.npz
+!deploy/bundle/*.npz
+!deploy/logs/*.npz
