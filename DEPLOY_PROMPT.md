@@ -45,6 +45,9 @@ hand until it clicks, check the mark). Write `gripper_real_to_sim` as
 ## Step 4: teach the plate (fills `deploy/calib/plate.json`)
 Read the docstring of `deploy/teach_plate.py`. Find out from the Piper docs how to put the arm in teach (drag) mode,
 or jog it in small steps with your own read-and-command tool (max 1 deg per step, operator approving).
+0. TCP check first: close the gripper fully, point it straight down, rest the fingertips lightly on the bare
+   tabletop (not the plate), type `table`. Do 2 spots. The fingertip point should read -40 mm (table height in the
+   arm frame). Report the errors; if > 1.5 mm, stop and report (the TCP length or the arm mounting height is off).
 1. Operator presses a brick FULLY onto cell `0 0` (the target, near corner of the plate).
 2. Bring the open gripper straight down around the brick, fingertips ~6.5 mm above the brick's bottom edge, gripper
    vertical. Close gently. In `teach_plate.py` type `0 0` and Enter.

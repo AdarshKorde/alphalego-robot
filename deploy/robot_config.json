@@ -3,6 +3,8 @@
   "can": "can0",
   "rate_hz": 25.0,
   "plate_calib_file": "calib/plate.json",
+  "table_z_m": -0.040,
+  "_table_z_m": "tabletop height in the arm frame (table CAD: arm base on 40 mm rails). teach_plate 'table' checks the TCP against it.",
 
   "gripper_effort": 3000,
   "_gripper_effort": "0.001 N*m; 3000 ~ 30 N assumed (spec 50 N at max). Pen test: 2000 held, 1000 slipped once.",

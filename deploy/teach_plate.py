@@ -8,6 +8,9 @@ known places on the plate and the arm has measured the plate.
        one exact coordinate. Grip each cell twice: fingers closing along the plate's x, then (wrist turned 90 deg)
        along y. At least 2 cells far apart (e.g. 0 0 and 5 5); 3-4 cells give an error check.
   z:   close the gripper fully and rest the fingertips lightly on the plate's stud tops (no brick), press Enter.
+  table: TCP check, do first. Closed gripper pointing straight down, fingertips resting lightly on the bare tabletop.
+       The fingertip point (TCP, 142.5 mm out from the link6 flange along the gripper axis, between the fingers) should
+       read table_z_m (-40 mm). The error is the TCP length plus any arm mounting height error; > 1.5 mm: report it.
 
 Moving the arm: use the Piper's teach (drag) mode, or jog it with your own tool; this script only reads.
 Output: calib/plate.json with plate_pos (underside centre, sim convention), plate_yaw, per-grip residuals in mm.
@@ -81,7 +84,9 @@ def main():
     g = cfg["geometry"]
     grips, touches = [], []
     print(__doc__.split("Moving the arm")[0])
-    print("Commands:  'a b' = grip on cell (a,b) now  |  z = fingertips on stud tops now  |  fit  |  quit")
+    print("Commands:  table = fingertips on tabletop (TCP check)  |  'a b' = grip on cell (a,b) now  |  "
+          "z = fingertips on stud tops now  |  fit  |  quit")
+    table_checks = []
     try:
         while True:
             cmd = input("> ").strip().lower()
@@ -91,6 +96,15 @@ def main():
                 break
             q, grip = average_state(arm)
             p, R = core.tcp_pose(q, g["tcp_z"])
+            if cmd == "table":
+                err = (p[2] - cfg_r["table_z_m"]) * 1e3
+                tilt = math.degrees(math.acos(min(1.0, -R[2, 2])))
+                table_checks.append({"tcp": p.tolist(), "q": q.tolist(), "err_mm": float(err), "tilt_deg": tilt})
+                print(f"  tabletop: TCP z {p[2] * 1e3:.1f} mm, expected {cfg_r['table_z_m'] * 1e3:.1f} -> error "
+                      f"{err:+.1f} mm (gripper {tilt:.1f} deg from vertical)"
+                      + ("  WARNING: > 1.5 mm, report this" if abs(err) > 1.5 else "  ok")
+                      + ("  WARNING: not vertical, redo" if tilt > 1.0 else ""))
+                continue
             if cmd == "z":
                 touches.append({"tcp": p.tolist(), "q": q.tolist()})
                 print(f"  stud-top touch at z {p[2] * 1e3:.1f} mm")
@@ -126,7 +140,8 @@ def main():
               "tilted; press/clamp it flat and touch again (the sim plate is perfectly flat)")
     if max(abs(r) for r in out["residual_mm"]) > 1.0:
         print("WARNING: a grip disagrees with the others by > 1 mm; redo that grip (brick fully pressed? gripper vertical?)")
-    out.update({"created": datetime.now().isoformat(timespec="seconds"), "grips": grips, "z_touches": touches})
+    out.update({"created": datetime.now().isoformat(timespec="seconds"), "grips": grips, "z_touches": touches,
+                "table_checks": table_checks})
     f = HERE / cfg_r["plate_calib_file"]
     f.parent.mkdir(exist_ok=True)
     f.write_text(json.dumps(out, indent=1))
