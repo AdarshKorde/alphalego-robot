@@ -50,7 +50,8 @@ or jog it in small steps with your own read-and-command tool (max 1 deg per step
    vertical. Close gently. In `teach_plate.py` type `0 0` and Enter.
 3. Open, turn the wrist (J6) 90 deg, grip the same brick again, type `0 0` again.
 4. Repeat on cells `5 5`, `5 0`, `0 5` (both wrist angles each).
-5. Remove the brick, close the gripper fully, rest the fingertips lightly on plate stud tops, type `z` (do 2-3 spots).
+5. Remove the brick, close the gripper fully, rest the fingertips lightly on plate stud tops, type `z`. Do 4 spots
+   spread over the cells the task uses (near 0 0, 5 0, 0 5, 5 5); `fit` warns if they differ by > 0.7 mm (bowed plate).
 6. Type `fit`. Report the "plate vs sim" line and the residuals. Pass: all residuals within 1 mm (redo outliers).
 7. The plate must be where the sim had it: the policy was trained with a fixed plate and places the brick at that
    trained spot, whatever the calibration says. If |dx| or |dy| > 1 mm or |yaw| > 0.5 deg, slide/turn the plate by

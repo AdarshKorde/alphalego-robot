@@ -61,7 +61,9 @@ def fit(cfg, grips, z_touches):
     _, yaw, cxy, res = best
     out = {"plate_yaw": float(yaw), "residual_mm": [float(r * 1e3) for r in res]}
     if z_touches:
-        stud_top = float(np.mean([t["tcp"][2] for t in z_touches]))
+        zs = [t["tcp"][2] for t in z_touches]
+        stud_top = float(np.mean(zs))
+        out["z_spread_mm"] = float((max(zs) - min(zs)) * 1e3)          # plate flatness over the touched spots
         slab_top = stud_top - g["stud_h"]
         z = slab_top - (g["slab_top_z"] - g["plate_pos"][2])
     else:
@@ -119,6 +121,9 @@ def main():
     d = (np.array(out["plate_pos"]) - np.array(g["plate_pos"])) * 1e3
     print(f"plate vs sim: dx {d[0]:+.1f} dy {d[1]:+.1f} dz {d[2]:+.1f} mm, yaw {math.degrees(out['plate_yaw']):+.2f} "
           f"deg; residuals mm {np.round(out['residual_mm'], 2)}")
+    if out.get("z_spread_mm", 0.0) > 0.7:
+        print(f"WARNING: stud tops differ by {out['z_spread_mm']:.1f} mm between touches: the plate is bowed or "
+              "tilted; press/clamp it flat and touch again (the sim plate is perfectly flat)")
     if max(abs(r) for r in out["residual_mm"]) > 1.0:
         print("WARNING: a grip disagrees with the others by > 1 mm; redo that grip (brick fully pressed? gripper vertical?)")
     out.update({"created": datetime.now().isoformat(timespec="seconds"), "grips": grips, "z_touches": touches})
