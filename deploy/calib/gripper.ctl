@@ -1,0 +1,37 @@
+status
+goto 45 1000
+quit
+gripoff
+status
+status
+status
+status
+status
+status
+status
+status
+gripon
+goto 50 1000
+status
+gripoff
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+status
+quit

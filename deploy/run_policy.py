@@ -76,7 +76,7 @@ class VirtualBrick:
             self.press_t = 0.0
 
 
-def check(st, cfg_r, rules, tcp_p, plate, mode, now):
+def check(st, cfg_r, rules, tcp_p, plate, mode, now, floor_z=None):
     if now - st["t"] > cfg_r["feedback_max_age_s"]:
         return f"feedback {1000 * (now - st['t']):.0f} ms old"
     s = st["status"]
@@ -86,7 +86,10 @@ def check(st, cfg_r, rules, tcp_p, plate, mode, now):
         return "arm switched to teach mode"
     if s["comm_err"]:
         return "joint communication error"
-    if tcp_p[2] < plate.slab_top_z + cfg_r["fingertip_min_above_slab_m"]:
+    if floor_z is not None:                      # air --air-floor-mm: absolute floor instead of the (virtual) slab
+        if tcp_p[2] < floor_z:
+            return f"fingertip z {1000 * tcp_p[2]:.1f} mm below the air floor {1000 * floor_z:.0f} mm"
+    elif tcp_p[2] < plate.slab_top_z + cfg_r["fingertip_min_above_slab_m"]:
         return f"fingertip {1000 * (tcp_p[2] - plate.slab_top_z):.1f} mm above the slab"
     if mode != "shadow":
         err = np.abs(st["q"] - rules.target)
@@ -106,6 +109,9 @@ def main():
     ap.add_argument("--yaw-deg", type=float, default=0.0, help="brick yaw on the plate, multiple of 90")
     ap.add_argument("--confirm", action="store_true", help="required for air/real: the arm will move")
     ap.add_argument("--seconds", type=float, default=None)
+    ap.add_argument("--air-floor-mm", type=float, default=None,
+                    help="air only: let the fingertip go below the raised virtual slab, down to this arm-frame z (mm)")
+    ap.add_argument("--sim-plate", action="store_true", help="air only: use the sim's plate position, not calib")
     args = ap.parse_args()
 
     cfg = core.load_config()
@@ -114,8 +120,12 @@ def main():
     calib = json.loads(calib_path.read_text()) if calib_path.exists() else None
     if args.mode == "real" and calib is None:
         raise SystemExit(f"mode real needs a taught plate: run teach_plate.py first ({calib_path})")
+    if (args.air_floor_mm is not None or args.sim_plate) and args.mode != "air":
+        raise SystemExit("--air-floor-mm and --sim-plate are for mode air only")
+    floor_z = None if args.air_floor_mm is None else args.air_floor_mm / 1000.0
     if args.mode == "air":                       # the whole task 10 cm up: nothing near the plate can be hit
-        base = calib or {"plate_pos": cfg["geometry"]["plate_pos"], "plate_yaw": 0.0}
+        base = None if args.sim_plate else calib
+        base = base or {"plate_pos": cfg["geometry"]["plate_pos"], "plate_yaw": 0.0}
         calib = {**base, "plate_pos": [base["plate_pos"][0], base["plate_pos"][1], base["plate_pos"][2] + AIR_LIFT]}
     plate = core.Plate(cfg, calib)
     if calib:
@@ -165,7 +175,7 @@ def main():
             st = arm.state()
             q = st["q"]
             tcp_p, tcp_R = core.tcp_pose(q, g["tcp_z"])
-            reason = check(st, cfg_r, rules, tcp_p, plate, args.mode, time.monotonic())
+            reason = check(st, cfg_r, rules, tcp_p, plate, args.mode, time.monotonic(), floor_z)
             if reason:
                 break
             raw = st["grip_m"]

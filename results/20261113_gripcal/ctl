@@ -1,0 +1,19 @@
+goto 0 3000
+status
+status
+status
+status
+status
+open
+status
+close 3000 1
+push
+pushend
+open
+goto 50 3000
+status
+status
+status
+status
+status
+quit

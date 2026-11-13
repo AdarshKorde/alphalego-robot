@@ -1,0 +1,5 @@
+spot 1 | tcp (117.3, 104.2, -39.1) mm | q [44.0, 85.31, -17.32, -3.79, 25.11, 0.64] | tabletop: TCP z -39.1 mm, expected -40.0 -> error +0.9 mm (gripper 2.5 deg from vertical)  ok  WARNING: not vertical, redo
+spot 2 | tcp (211.8, 257.0, -42.3) mm | q [49.28, 112.47, -57.33, 2.92, 36.98, 0.64] | tabletop: TCP z -42.3 mm, expected -40.0 -> error -2.3 mm (gripper 3.4 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+spot 3 | tcp (154.0, 262.1, -42.3) mm | q [58.84, 109.03, -51.26, 1.6, 35.72, 0.64] | tabletop: TCP z -42.3 mm, expected -40.0 -> error -2.3 mm (gripper 1.8 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+spot 4 | tcp (351.7, 61.7, -42.7) mm | q [9.32, 117.49, -66.55, 1.38, 43.51, 0.59] | tabletop: TCP z -42.7 mm, expected -40.0 -> error -2.7 mm (gripper 1.1 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+spot 5 | tcp (110.8, 112.6, -39.5) mm | q [43.37, 86.86, -18.99, 3.12, 26.95, 0.59] | tabletop: TCP z -39.5 mm, expected -40.0 -> error +0.5 mm (gripper 1.4 deg from vertical)  ok  WARNING: not vertical, redo

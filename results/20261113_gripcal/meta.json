@@ -1,0 +1,55 @@
+{
+  "trials": {
+    "grip_eff3000_try1": {
+      "started": "2026-11-13T18:02:27",
+      "effort": 3000,
+      "try": 1,
+      "steady": {
+        "open_mm_mean": 36.0,
+        "open_mm_std": 0.0,
+        "eff_nm_mean": -2.0865075,
+        "eff_nm_std": 0.00289999030170792,
+        "n": 400
+      },
+      "events": {
+        "close": 0.0,
+        "push_start": 50.39923309197184,
+        "push_end": 64.51932533504441,
+        "open": 98.55948805401567
+      },
+      "n_fb": 20004
+    }
+  },
+  "started": "2026-11-13T17:59:26",
+  "firmware": "S-V1.8-8",
+  "sdk_version": "0.6.2",
+  "can": "can0",
+  "script_sha256": {
+    "grip_test.py": "0e1d7fe0f3c18ad73e01f60ed679e105a423bd4c1a0895e1a28327dc3cbd52a8",
+    "sysid_record.py": "dc8447f858e4028ee60080d9c08d4c9deb38b25960fecb7b81d9fcf7c2f8d6b5"
+  },
+  "q_home_deg": [
+    0.0,
+    60.0,
+    -50.0,
+    0.0,
+    50.0,
+    0.0
+  ],
+  "rate_hz": 25.0,
+  "hold_speed_pct": 60,
+  "open_um": 60000,
+  "close_um": 20000,
+  "settle_s": 1.5,
+  "steady_s": 2.0,
+  "command_path": "MotionCtrl_2(0x01, 0x01, speed_pct, 0x00); JointCtrl(0.001 deg); GripperCtrl(um, effort, 0x01, 0)",
+  "units": {
+    "fb_grip_um": "0.001 mm",
+    "fb_grip_effort": "0.001 N\u00b7m",
+    "fb_effort": "0.001 N\u00b7m",
+    "fb_q_mdeg": "0.001 deg",
+    "fb_t / cmd_t / events_t": "host time.monotonic() s",
+    "grip_status": "0x2A8 byte 6; bits 0-5 faults, bit 6 enabled, bit 7 zeroed"
+  },
+  "wall_minus_monotonic_s": 1793680297.0678377
+}

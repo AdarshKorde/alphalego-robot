@@ -1,0 +1,38 @@
+Measure where the baseplate is, using the arm itself (read-only: never enables or commands the arm).
+
+Idea: the arm always knows where its fingertips are (joint encoders -> forward kinematics). Put the fingertips at
+known places on the plate and the arm has measured the plate.
+
+  xy:  press a brick firmly onto a cell, close the gripper on it at grasp height, press Enter. Closing fingers centre
+       the brick only along the CLOSING direction (along the finger width it can sit a few mm off), so each grip gives
+       one exact coordinate. Grip each cell twice: fingers closing along the plate's x, then (wrist turned 90 deg)
+       along y. At least 2 cells far apart (e.g. 0 0 and 5 5); 3-4 cells give an error check.
+  z:   close the gripper fully and rest the fingertips lightly on the plate's stud tops (no brick), press Enter.
+  table: TCP check, do first. Closed gripper pointing straight down, fingertips resting lightly on the bare tabletop.
+       The fingertip point (TCP, 142.5 mm out from the link6 flange along the gripper axis, between the fingers) should
+       read table_z_m (-40 mm). The error is the TCP length plus any arm mounting height error; > 1.5 mm: report it.
+
+
+Commands:  table = fingertips on tabletop (TCP check)  |  'a b' = grip on cell (a,b) now  |  z = fingertips on stud tops now  |  fit  |  quit
+>   tabletop: TCP z -41.7 mm, expected -40.0 -> error -1.7 mm (gripper 2.0 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+>   tabletop: TCP z -39.1 mm, expected -40.0 -> error +0.9 mm (gripper 2.5 deg from vertical)  ok  WARNING: not vertical, redo
+>   tabletop: TCP z -42.3 mm, expected -40.0 -> error -2.3 mm (gripper 3.4 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+>   tabletop: TCP z -42.3 mm, expected -40.0 -> error -2.3 mm (gripper 1.8 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+>   tabletop: TCP z -42.7 mm, expected -40.0 -> error -2.7 mm (gripper 1.1 deg from vertical)  WARNING: > 1.5 mm, report this  WARNING: not vertical, redo
+>   tabletop: TCP z -39.5 mm, expected -40.0 -> error +0.5 mm (gripper 1.4 deg from vertical)  ok  WARNING: not vertical, redo
+>   cell (0,0): fingertips at (199.0, 95.1, -26.4) mm, closing along (-0.01, +1.00); +53.8 mm from the sim cell along that axis
+>   cell (0,0): fingertips at (201.0, 96.5, -30.9) mm, closing along (+1.00, +0.03); +36.9 mm from the sim cell along that axis
+>   cell (5,0): fingertips at (279.0, 95.7, -30.4) mm, closing along (-0.01, +1.00); +54.3 mm from the sim cell along that axis
+>   cell (5,0): fingertips at (280.8, 96.2, -30.6) mm, closing along (+1.00, +0.03); +36.6 mm from the sim cell along that axis
+>   cell (0,5): fingertips at (199.8, 176.5, -28.1) mm, closing along (-0.02, +1.00); +55.0 mm from the sim cell along that axis
+>   cell (0,5): fingertips at (200.1, 179.8, -28.2) mm, closing along (+1.00, +0.04); +36.2 mm from the sim cell along that axis
+>   cell (5,5): fingertips at (279.4, 175.0, -29.4) mm, closing along (-0.02, +1.00); +53.3 mm from the sim cell along that axis
+>   cell (5,5): fingertips at (281.2, 176.2, -31.4) mm, closing along (+1.00, +0.02); +36.4 mm from the sim cell along that axis
+>   stud-top touch at z -34.7 mm
+>   stud-top touch at z -35.1 mm
+>   stud-top touch at z -35.8 mm
+>   stud-top touch at z -35.4 mm
+>   stud-top touch at z -35.8 mm
+> plate vs sim: dx +34.9 dy +54.5 dz -1.0 mm, yaw -0.05 deg; residuals mm [ 0.54 -0.24 -0.18 -0.07 -0.88  0.63  0.51 -0.32]
+WARNING: stud tops differ by 1.1 mm between touches: the plate is bowed or tilted; press/clamp it flat and touch again (the sim plate is perfectly flat)
+saved /home/adarsh/alphalego-robot/deploy/calib/plate.json

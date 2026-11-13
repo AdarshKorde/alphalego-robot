@@ -10,8 +10,8 @@
   "_gripper_effort": "0.001 N*m; 3000 ~ 30 N assumed (spec 50 N at max). Pen test: 2000 held, 1000 slipped once.",
   "gripper_open_um": 50000,
   "gripper_close_um": 0,
-  "gripper_real_to_sim": [[0.0003, 0.0], [0.0377, 0.0318], [0.050, 0.050]],
-  "_gripper_real_to_sim": "TODO B3: [real reading, sim opening] pairs. Now: closed empty 0.3 mm -> 0; brick at effort 1000 read 37.7 mm -> 31.8 (sim brick width); open assumed 1:1. Re-measure at effort 3000.",
+  "gripper_real_to_sim": [[0.0003, 0.0], [0.0360, 0.0318], [0.0502, 0.050]],
+  "_gripper_real_to_sim": "[real reading, sim opening] pairs, measured 2026-11-13 at effort 3000 (results/20261113_gripcal): closed empty 0.30 mm -> 0; closed on a 2x2 brick 36.00 mm -> 31.8 (sim brick width); commanded 50000 um read 50.20 mm -> 50. Effort 3000 read back -2.087 N*m, the same as effort 2000 (-2.086), so the grip force may be capped near 2 N*m.",
 
   "joint_min_deg": [-150.0, 0.0, -170.0, -100.0, -70.0, -120.0],
   "joint_max_deg": [150.0, 180.0, 0.0, 100.0, 70.0, 120.0],

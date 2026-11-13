@@ -7,6 +7,10 @@
                push / pushend         mark the operator's plate push (logging never stops)
                open                   open to 60 mm; 1.5 s later the trial is saved as grip_eff<e>_try<k>.npz
                status                 print measured joints, opening, effort, gripper status
+               goto <mm> [effort]     move the gripper to an opening (0..100 mm), status printed 2 s later
+               gripoff                disable the gripper (fingers move freely by hand)
+               setzero                while disabled: set the current finger position as the gripper zero (0xAE)
+               gripon                 re-enable the gripper, holding its current measured opening
                quit                   stop commanding (the arm holds q_home, it is never disabled)
   summarize  write <out>/SUMMARY.md from the .npz logs plus <out>/observations.json (operator's slip/click/tilt notes)
 
@@ -126,6 +130,7 @@ def serve(args):
     t_next = time.perf_counter()
     reason = None
     grace_until = 0.0
+    grip_code, zero_pending = 0x01, False
 
     def save(tr):
         i_fb, i_cmd, i_g = tr["i0"]
@@ -148,8 +153,14 @@ def serve(args):
         meta_path.write_text(json.dumps(m, indent=2))
         print(f"saved {stem}.npz ({len(fb['fb_t'])} feedback samples)", flush=True)
 
+    def print_status():
+        c, o, e = grip_status(arm)
+        print(f"q {np.round(log.last_q, 2).tolist()}  opening {o / 1000:.2f} mm  effort {e / 1000:.3f} N·m  "
+              f"gripper status 0x{c:02X} (enabled {c >> 6 & 1}, zeroed {c >> 7 & 1})  "
+              f"cmd {grip / 1000:.1f} mm @ {eff} code 0x{grip_code:02X}", flush=True)
+
     def handle(line):
-        nonlocal grip, eff, trial
+        nonlocal grip, eff, trial, grip_code, zero_pending
         w = line.split()
         now = time.monotonic()
         if w[0] == "close" and len(w) == 3:
@@ -185,9 +196,27 @@ def serve(args):
                 timers.append((now + SAVE_AFTER_OPEN_S, "save"))
             print(f"opening to {OPEN_UM / 1000:.0f} mm")
         elif w[0] == "status":
-            c, o, e = grip_status(arm)
-            print(f"q {np.round(log.last_q, 2).tolist()}  opening {o / 1000:.2f} mm  effort {e / 1000:.3f} N·m  "
-                  f"gripper status 0x{c:02X}  cmd {grip / 1000:.0f} mm @ {eff}")
+            print_status()
+        elif w[0] in ("goto", "gripoff", "setzero", "gripon") and trial:
+            print(f"refused: a trial is active; send 'open' first")
+        elif w[0] == "goto" and len(w) in (2, 3):
+            mm, e = float(w[1]), int(w[2]) if len(w) == 3 else EFFORT_OPEN
+            if not (0 <= mm <= 100 and 0 < e <= EFFORT_MAX) or grip_code != 0x01:
+                return print(f"refused: need 0..100 mm, effort 1..{EFFORT_MAX}, gripper enabled")
+            grip, eff = round(mm * 1000), e
+            timers.append((now + 2.0, "status"))
+            print(f"gripper to {mm:.1f} mm at effort {e}")
+        elif w[0] == "gripoff":
+            grip_code = 0x00
+            print("gripper disabled: fingers are free to move by hand")
+        elif w[0] == "setzero":
+            if grip_code != 0x00:
+                return print("refused: send 'gripoff' first")
+            zero_pending = True
+        elif w[0] == "gripon":
+            _, o, _ = grip_status(arm)
+            grip, eff, grip_code = min(max(o, 0), 100_000), EFFORT_OPEN, 0x03  # enable + clear errors, then 0x01
+            print(f"gripper enabled, holding {grip / 1000:.2f} mm")
         elif w[0] == "quit":
             return "quit"
         else:
@@ -206,7 +235,14 @@ def serve(args):
                 break
             arm.MotionCtrl_2(0x01, 0x01, HOLD_SPEED_PCT, 0x00)
             arm.JointCtrl(*qi)
-            arm.GripperCtrl(grip, eff, 0x01, 0)
+            if zero_pending:  # as piper_sdk demo/V2/piper_set_gripper_zero.py: disabled, then 0xAE
+                arm.GripperCtrl(0, EFFORT_OPEN, 0x00, 0xAE)
+                zero_pending = False
+                timers.append((now + 1.0, "status"))
+                print("sent set-zero (0xAE)", flush=True)
+            else:
+                arm.GripperCtrl(grip, eff, grip_code, 0)
+                grip_code = 0x01 if grip_code == 0x03 else grip_code
             for key, v in zip(cmd, (now, qi, grip, eff, HOLD_SPEED_PCT, HOLD)):
                 cmd[key].append(v)
             gst["t"].append(now)
@@ -220,6 +256,8 @@ def serve(args):
                     print(f"steady (effort {trial['effort']}, try {trial['try']}): opening {st['open_mm_mean']:.2f} "
                           f"± {st['open_mm_std']:.3f} mm, fb_grip_effort {st['eff_nm_mean']:.3f} ± "
                           f"{st['eff_nm_std']:.3f} N·m (n={st['n']}); gripper status 0x{code:02X}", flush=True)
+                elif action == "status":
+                    print_status()
                 elif action == "save" and trial:
                     save(trial)
                     trial, eff = None, EFFORT_OPEN
